@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petualangan Gizi: Perjalanan Tumbuh Kembang Balita</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Fredoka & Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sage: {
+                            50: '#F0F7F2',
+                            100: '#DDECE1',
+                            200: '#C0DBC7',
+                            300: '#91C09C',
+                            500: '#4E8752',
+                            700: '#2F5933',
+                            800: '#1C3A20',
+                        },
+                        cream: '#FFFDF9',
+                        warmorange: '#E65100',
+                        softcoral: '#D84315',
+                        sunnyellow: '#F57F17',
+                        mint: '#A5D6A7',
+                    },
+                    fontFamily: {
+                        display: ['Fredoka', 'sans-serif'],
+                        body: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #FFFDF9;
+            color: #0F172A;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+
+        /* Real 3D Flip Card Styles */
+        .flip-card {
+            background-color: transparent;
+            perspective: 1000px;
+            min-height: 380px;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1.25rem;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        @keyframes bounce-gentle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .animate-gentle {
+            animation: bounce-gentle 2.5s infinite ease-in-out;
+        }
+
+        .age-tab.active {
+            background-color: #4E8752;
+            color: white;
+            border-color: #1C3A20;
+            box-shadow: 0 4px 14px rgba(78, 135, 82, 0.4);
+            transform: translateY(-2px);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #DDECE1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4E8752;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between bg-[#FFFDF9]">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 bg-[#FFFDF9]/95 backdrop-blur-md border-b-2 border-sage-200 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="scrollToSection('hero')">
+                <div class="w-11 h-11 rounded-2xl bg-sage-500 flex items-center justify-center text-white text-2xl shadow-md font-heading animate-gentle">
+                    👶
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 leading-tight tracking-tight">Petualangan Gizi</h1>
+                    <p class="text-[12px] font-bold text-sage-700">Perjalanan Tumbuh Kembang & Nutrisi Balita</p>
+                </div>
+            </div>
+
+            <!-- Nav Items -->
+            <nav class="hidden md:flex items-center gap-1 bg-sage-100 p-1.5 rounded-2xl border-2 border-sage-200">
+                <button onclick="scrollToSection('hero')" class="px-3 py-1.5 text-xs font-extrabold rounded-xl text-slate-800 hover:bg-white transition">Beranda</button>
+                <button onclick="scrollToSection('growth-tracker')" class="px-3 py-1.5 text-xs font-extrabold rounded-xl text-slate-800 hover:bg-white transition">Tahap Usia</button>
+                <button onclick="scrollToSection('flashcard-section')" class="px-3 py-1.5 text-xs font-extrabold rounded-xl text-slate-800 hover:bg-white transition">Kartu Gizi</button>
+                <button onclick="scrollToSection('simulasi')" class="px-3 py-1.5 text-xs font-extrabold rounded-xl text-slate-800 hover:bg-white transition">Simulasi Tubuh</button>
+                <button onclick="scrollToSection('game-zone')" class="px-3.5 py-1.5 text-xs font-extrabold rounded-xl bg-sage-500 text-white shadow-sm hover:bg-sage-700 transition">Kuis & Game</button>
+            </nav>
+
+            <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="md:hidden w-10 h-10 flex items-center justify-center text-slate-900 bg-sage-100 rounded-xl border-2 border-sage-300">
+                <i class="fa-solid fa-bars text-lg"></i>
+            </button>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b-2 border-sage-200 px-4 py-3 space-y-2 shadow-lg">
+            <button onclick="scrollToSection('hero'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 text-xs font-extrabold text-slate-900 hover:bg-sage-50 rounded-lg">Beranda</button>
+            <button onclick="scrollToSection('growth-tracker'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 text-xs font-extrabold text-slate-900 hover:bg-sage-50 rounded-lg">Tahap Usia</button>
+            <button onclick="scrollToSection('flashcard-section'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 text-xs font-extrabold text-slate-900 hover:bg-sage-50 rounded-lg">Kartu Gizi</button>
+            <button onclick="scrollToSection('simulasi'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 text-xs font-extrabold text-slate-900 hover:bg-sage-50 rounded-lg">Simulasi Tubuh</button>
+            <button onclick="scrollToSection('game-zone'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 text-xs font-extrabold text-white bg-sage-500 rounded-lg">Kuis & Game</button>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- Hero Section -->
+        <section id="hero" class="py-8 md:py-12 px-4 max-w-6xl mx-auto">
+            <div class="relative bg-gradient-to-br from-emerald-100 via-amber-100 to-orange-100 rounded-[2.5rem] p-6 sm:p-10 border-4 border-sage-300 shadow-md overflow-hidden text-center mb-8">
+                <div class="absolute -right-10 -top-10 w-48 h-48 bg-yellow-300/30 rounded-full blur-2xl"></div>
+                <div class="absolute -left-10 -bottom-10 w-48 h-48 bg-emerald-300/30 rounded-full blur-2xl"></div>
+
+                <div class="max-w-md mx-auto relative mb-6">
+                    <div class="w-36 h-36 sm:w-44 sm:h-44 mx-auto bg-white rounded-full flex items-center justify-center text-8xl shadow-lg border-4 border-sage-300 animate-gentle relative z-10">
+                        <span id="hero-character-emoji">👶</span>
+                    </div>
+                    <span class="absolute top-2 left-4 text-4xl animate-pulse">🥦</span>
+                    <span class="absolute top-8 right-6 text-4xl animate-pulse">🍎</span>
+                    <span class="absolute bottom-2 left-8 text-4xl">🥛</span>
+                    <span class="absolute bottom-4 right-10 text-4xl">🥕</span>
+                </div>
+
+                <div class="max-w-xl mx-auto space-y-3 relative z-10">
+                    <span class="inline-block px-4 py-1.5 rounded-full bg-sage-700 text-white text-xs font-extrabold tracking-wide shadow-sm">
+                        ✨ Kenali Perjalanan Hebat Pertumbuhan Si Kecil
+                    </span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight">
+                        Petualangan Gizi Balita 0–5 Tahun
+                    </h2>
+                    <p class="text-xs sm:text-sm font-bold text-slate-800 leading-relaxed">
+                        Pilih rentang usia balita di bawah untuk melihat perkembangan fisik, motorik, serta kebutuhan nutrisi hariannya secara interaktif!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quick Age Selector Grid -->
+            <div class="text-center mb-5">
+                <h3 class="text-2xl font-extrabold text-slate-900">Pilih perjalanan usiamu</h3>
+                <p class="text-xs text-slate-700 font-extrabold mt-1">Klik salah satu kotak usia untuk melihat detail perkembangan</p>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                <button onclick="setAgeStage(0); scrollToSection('growth-tracker')" class="quick-age-btn p-4 rounded-2xl bg-sage-100 hover:bg-sage-200 border-2 border-sage-300 text-center transition shadow-sm group">
+                    <div class="text-4xl mb-1 group-hover:scale-110 transition">🍼</div>
+                    <div class="text-xs font-extrabold text-slate-900">0–6 bulan</div>
+                </button>
+
+                <button onclick="setAgeStage(1); scrollToSection('growth-tracker')" class="quick-age-btn p-4 rounded-2xl bg-sage-100 hover:bg-sage-200 border-2 border-sage-300 text-center transition shadow-sm group">
+                    <div class="text-4xl mb-1 group-hover:scale-110 transition">🥣</div>
+                    <div class="text-xs font-extrabold text-slate-900">6–12 bulan</div>
+                </button>
+
+                <button onclick="setAgeStage(2); scrollToSection('growth-tracker')" class="quick-age-btn p-4 rounded-2xl bg-sage-100 hover:bg-sage-200 border-2 border-sage-300 text-center transition shadow-sm group">
+                    <div class="text-4xl mb-1 group-hover:scale-110 transition">🧸</div>
+                    <div class="text-xs font-extrabold text-slate-900">1–2 tahun</div>
+                </button>
+
+                <button onclick="setAgeStage(3); scrollToSection('growth-tracker')" class="quick-age-btn p-4 rounded-2xl bg-sage-100 hover:bg-sage-200 border-2 border-sage-300 text-center transition shadow-sm group">
+                    <div class="text-4xl mb-1 group-hover:scale-110 transition">🎨</div>
+                    <div class="text-xs font-extrabold text-slate-900">2–3 tahun</div>
+                </button>
+
+                <button onclick="setAgeStage(4); scrollToSection('growth-tracker')" class="quick-age-btn p-4 rounded-2xl bg-sage-100 hover:bg-sage-200 border-2 border-sage-300 text-center transition shadow-sm group">
+                    <div class="text-4xl mb-1 group-hover:scale-110 transition">🧩</div>
+                    <div class="text-xs font-extrabold text-slate-900">3–4 tahun</div>
+                </button>
+
+                <button onclick="setAgeStage(4); scrollToSection('growth-tracker')" class="quick-age-btn p-4 rounded-2xl bg-sage-100 hover:bg-sage-200 border-2 border-sage-300 text-center transition shadow-sm group">
+                    <div class="text-4xl mb-1 group-hover:scale-110 transition">🎒</div>
+                    <div class="text-xs font-extrabold text-slate-900">4–5 tahun</div>
+                </button>
+            </div>
+        </section>
+
+        <!-- SECTION 1: TIMELINE PERTUMBUHAN BALITA INTERAKTIF (0-59 BULAN) -->
+        <section id="growth-tracker" class="py-10 bg-white border-t-2 border-sage-200">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                    <div>
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-white bg-sage-700 px-3.5 py-1 rounded-full shadow-sm">Fase 1 • Perjalanan Usia</span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">1. Perjalanan Usia</h2>
+                        <p class="text-slate-800 text-xs sm:text-sm font-bold mt-1">Melihat perubahan anak dari bayi baru lahir sampai 5 tahun.</p>
+                    </div>
+
+                    <!-- Timeline Tabs -->
+                    <div class="flex overflow-x-auto gap-2 pb-2">
+                        <button onclick="setAgeStage(0)" id="stage-btn-0" class="age-tab active px-3.5 py-2 rounded-xl font-extrabold text-xs whitespace-nowrap transition border-2 border-sage-300 bg-sage-50 text-slate-900">0–6 bln</button>
+                        <button onclick="setAgeStage(1)" id="stage-btn-1" class="age-tab px-3.5 py-2 rounded-xl font-extrabold text-xs whitespace-nowrap transition border-2 border-sage-300 bg-sage-50 text-slate-900">6–12 bln</button>
+                        <button onclick="setAgeStage(2)" id="stage-btn-2" class="age-tab px-3.5 py-2 rounded-xl font-extrabold text-xs whitespace-nowrap transition border-2 border-sage-300 bg-sage-50 text-slate-900">1–2 thn</button>
+                        <button onclick="setAgeStage(3)" id="stage-btn-3" class="age-tab px-3.5 py-2 rounded-xl font-extrabold text-xs whitespace-nowrap transition border-2 border-sage-300 bg-sage-50 text-slate-900">2–3 thn</button>
+                        <button onclick="setAgeStage(4)" id="stage-btn-4" class="age-tab px-3.5 py-2 rounded-xl font-extrabold text-xs whitespace-nowrap transition border-2 border-sage-300 bg-sage-50 text-slate-900">3–5 thn</button>
+                    </div>
+                </div>
+
+                <!-- Stage Showcase Card -->
+                <div class="bg-gradient-to-br from-emerald-50 via-amber-50 to-sage-100 rounded-3xl p-6 sm:p-8 border-3 border-sage-300 shadow-md grid md:grid-cols-12 gap-8 items-center">
+                    
+                    <!-- Left: Interactive Character Avatar -->
+                    <div class="md:col-span-5 flex flex-col items-center justify-center p-6 bg-white rounded-2xl border-2 border-sage-300 shadow-md relative">
+                        <div class="absolute top-3 left-3 bg-sage-700 text-white text-[12px] font-extrabold px-3 py-1 rounded-full shadow-sm" id="stage-badge-title">
+                            0 - 6 Bulan
+                        </div>
+
+                        <!-- Karakter Visual Emoji Dinamis -->
+                        <div class="w-44 h-44 sm:w-52 sm:h-52 my-4 flex items-center justify-center relative bg-emerald-50 rounded-full border-4 border-sage-300">
+                            <div id="character-avatar" class="text-8xl sm:text-9xl transition-all duration-500 transform hover:scale-105">
+                                🍼
+                            </div>
+                        </div>
+
+                        <div class="w-full text-center space-y-1.5">
+                            <h4 id="stage-height-weight" class="font-extrabold text-slate-900 text-xs bg-sage-100 py-2 px-3 rounded-xl border border-sage-300">BB 3.2 - 7.9 kg | PB 49 - 67 cm</h4>
+                            <p id="stage-nutrition-focus" class="text-xs text-sage-800 font-extrabold">ASI Eksklusif 100%</p>
+                        </div>
+                    </div>
+
+                    <!-- Right: Age Stage Details -->
+                    <div class="md:col-span-7 space-y-4">
+                        <div>
+                            <span class="text-[11px] font-extrabold text-white bg-warmorange px-3 py-1 rounded-full uppercase shadow-sm">Fokus Tumbuh Kembang</span>
+                            <h3 id="stage-title" class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">Usia 0 - 6 Bulan: Tahap ASI Eksklusif</h3>
+                            <p id="stage-desc" class="text-slate-800 text-xs sm:text-sm mt-1 font-bold leading-relaxed">
+                                Pencernaan bayi sangat peka. Seluruh gizi makro & mikro terpenuhi sempurna hanya dari ASI ibu.
+                            </p>
+                        </div>
+
+                        <!-- Milestone Cards -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div class="bg-white p-3.5 rounded-xl border-2 border-sage-200 shadow-sm">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center text-sm font-bold mb-1.5">🏃</div>
+                                <h4 class="text-xs font-extrabold text-slate-900">Motorik Kasar</h4>
+                                <p id="stage-motor-gross" class="text-[11px] font-bold text-slate-700 mt-0.5">Mengangkat kepala saat tengkurap, miring kanan/kiri.</p>
+                            </div>
+
+                            <div class="bg-white p-3.5 rounded-xl border-2 border-sage-200 shadow-sm">
+                                <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-900 flex items-center justify-center text-sm font-bold mb-1.5">✋</div>
+                                <h4 class="text-xs font-extrabold text-slate-900">Motorik Halus</h4>
+                                <p id="stage-motor-fine" class="text-[11px] font-bold text-slate-700 mt-0.5">Menggenggam jari orang tua, meraih benda terdekat.</p>
+                            </div>
+
+                            <div class="bg-white p-3.5 rounded-xl border-2 border-sage-200 shadow-sm">
+                                <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-900 flex items-center justify-center text-sm font-bold mb-1.5">😊</div>
+                                <h4 class="text-xs font-extrabold text-slate-900">Sosial & Bicara</h4>
+                                <p id="stage-social" class="text-[11px] font-bold text-slate-700 mt-0.5">Tersenyum responsif, mengoceh suara vokal sederhana.</p>
+                            </div>
+                        </div>
+
+                        <!-- Recommended Food -->
+                        <div class="p-4 rounded-xl bg-sage-200 border-2 border-sage-400 flex items-start gap-3 shadow-sm">
+                            <span class="text-2xl">🍲</span>
+                            <div>
+                                <h5 class="text-xs font-extrabold text-slate-900">Asupan Makanan Direkomendasikan:</h5>
+                                <p id="stage-food-rec" class="text-xs text-slate-900 font-bold mt-0.5">ASI Eksklusif sesering mungkin. Belum perlu air putih atau makanan padat.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: KARTU FLASH NUTRISI MAKRO & MIKRO (REAL 3D FLIP CARDS) -->
+        <section id="flashcard-section" class="py-10 bg-gradient-to-b from-white to-emerald-50/60 border-t-2 border-sage-200">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="mb-8">
+                    <span class="text-xs font-extrabold uppercase tracking-wider text-white bg-sage-700 px-3.5 py-1 rounded-full shadow-sm">Fase 2 • Dunia Nutrisi</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">2. Kartu Gizi Interaktif (Flip 3D)</h2>
+                    <p class="text-slate-800 text-xs sm:text-sm font-bold mt-1">Klik atau pencet kartu untuk membalikkan (flip) dan melihat rincian <b>Karbohidrat, Protein, Lemak, Vitamin, & Mineral</b> secara umum!</p>
+                </div>
+
+                <!-- 3D Flip Card Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
+
+                    <!-- CARD 1: KARBOHIDRAT -->
+                    <div id="flip-card-1" class="flip-card cursor-pointer" onclick="flipCard(1)">
+                        <div class="flip-card-inner">
+                            <!-- FRONT SIDE -->
+                            <div class="flip-card-front bg-white border-4 border-amber-400 shadow-md">
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2.5 py-1 bg-warmorange text-white rounded-full text-[10px] font-extrabold shadow-sm">Makronutrien</span>
+                                    <span class="text-xl">⚡</span>
+                                </div>
+                                <div class="my-auto py-2">
+                                    <div class="w-20 h-20 mx-auto rounded-2xl bg-amber-100 flex items-center justify-center text-5xl border-3 border-amber-300 shadow-inner animate-gentle">
+                                        🍚
+                                    </div>
+                                    <h3 class="text-xl font-extrabold text-slate-900 mt-3">Karbohidrat</h3>
+                                    <p class="text-[11px] font-extrabold text-amber-950 mt-1 bg-amber-100 py-1 px-2 rounded-xl border border-amber-300">Sumber Energi Utama</p>
+                                </div>
+                                <div class="w-full py-2 bg-warmorange text-white font-extrabold text-xs rounded-xl shadow-sm flex items-center justify-center gap-1.5">
+                                    <span>🔄 Dipencet Untuk Membalik</span>
+                                </div>
+                            </div>
+
+                            <!-- BACK SIDE -->
+                            <div class="flip-card-back bg-gradient-to-b from-amber-50 to-orange-100 border-4 border-amber-400 shadow-md text-left">
+                                <div class="border-b-2 border-amber-300 pb-1.5 flex items-center justify-between">
+                                    <h4 class="font-extrabold text-warmorange text-sm">⚡ Karbohidrat</h4>
+                                    <span class="text-[10px] font-extrabold bg-amber-200 text-amber-950 px-2 py-0.5 rounded">Makro</span>
+                                </div>
+                                <ul class="text-[11px] font-bold space-y-1.5 text-slate-900 leading-tight my-auto">
+                                    <li class="bg-white/90 p-2 rounded-xl border border-amber-300 shadow-sm"><b>🎯 Fungsi:</b> Bahan bakar energi utama otak & fisik anak aktif.</li>
+                                    <li class="bg-white/90 p-2 rounded-xl border border-amber-300 shadow-sm"><b>🧠 Organ:</b> Otak & Jaringan Otot.</li>
+                                    <li class="bg-white/90 p-2 rounded-xl border border-amber-300 shadow-sm"><b>🍚 Sumber:</b> Nasi, ubi, kentang, jagung, oatmeal.</li>
+                                </ul>
+                                <div class="w-full py-1.5 bg-slate-900 text-white text-center font-extrabold text-[11px] rounded-xl shadow-sm">
+                                    ↩️ Dipencet Membalik Lagi
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CARD 2: PROTEIN -->
+                    <div id="flip-card-2" class="flip-card cursor-pointer" onclick="flipCard(2)">
+                        <div class="flip-card-inner">
+                            <!-- FRONT SIDE -->
+                            <div class="flip-card-front bg-white border-4 border-rose-400 shadow-md">
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2.5 py-1 bg-softcoral text-white rounded-full text-[10px] font-extrabold shadow-sm">Makronutrien</span>
+                                    <span class="text-xl">🍗</span>
+                                </div>
+                                <div class="my-auto py-2">
+                                    <div class="w-20 h-20 mx-auto rounded-2xl bg-rose-100 flex items-center justify-center text-5xl border-3 border-rose-300 shadow-inner animate-gentle">
+                                        🥚
+                                    </div>
+                                    <h3 class="text-xl font-extrabold text-slate-900 mt-3">Protein</h3>
+                                    <p class="text-[11px] font-extrabold text-rose-950 mt-1 bg-rose-100 py-1 px-2 rounded-xl border border-rose-300">Zat Pembangun Tubuh</p>
+                                </div>
+                                <div class="w-full py-2 bg-softcoral text-white font-extrabold text-xs rounded-xl shadow-sm flex items-center justify-center gap-1.5">
+                                    <span>🔄 Dipencet Untuk Membalik</span>
+                                </div>
+                            </div>
+
+                            <!-- BACK SIDE -->
+                            <div class="flip-card-back bg-gradient-to-b from-rose-50 to-pink-100 border-4 border-rose-400 shadow-md text-left">
+                                <div class="border-b-2 border-rose-300 pb-1.5 flex items-center justify-between">
+                                    <h4 class="font-extrabold text-softcoral text-sm">🍗 Protein</h4>
+                                    <span class="text-[10px] font-extrabold bg-rose-200 text-rose-950 px-2 py-0.5 rounded">Makro</span>
+                                </div>
+                                <ul class="text-[11px] font-bold space-y-1.5 text-slate-900 leading-tight my-auto">
+                                    <li class="bg-white/90 p-2 rounded-xl border border-rose-300 shadow-sm"><b>🎯 Fungsi:</b> Membentuk sel otot, mendukung tinggi badan & cegah stunting.</li>
+                                    <li class="bg-white/90 p-2 rounded-xl border border-rose-300 shadow-sm"><b>💪 Organ:</b> Otot, Tulang & Sel Darah.</li>
+                                    <li class="bg-white/90 p-2 rounded-xl border border-rose-300 shadow-sm"><b>🥚 Sumber:</b> Telur, ayam, ikan, tempe, tahu.</li>
+                                </ul>
+                                <div class="w-full py-1.5 bg-slate-900 text-white text-center font-extrabold text-[11px] rounded-xl shadow-sm">
+                                    ↩️ Dipencet Membalik Lagi
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CARD 3: LEMAK -->
+                    <div id="flip-card-3" class="flip-card cursor-pointer" onclick="flipCard(3)">
+                        <div class="flip-card-inner">
+                            <!-- FRONT SIDE -->
+                            <div class="flip-card-front bg-white border-4 border-emerald-400 shadow-md">
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2.5 py-1 bg-sage-700 text-white rounded-full text-[10px] font-extrabold shadow-sm">Makronutrien</span>
+                                    <span class="text-xl">🥑</span>
+                                </div>
+                                <div class="my-auto py-2">
+                                    <div class="w-20 h-20 mx-auto rounded-2xl bg-emerald-100 flex items-center justify-center text-5xl border-3 border-emerald-300 shadow-inner animate-gentle">
+                                        🥑
+                                    </div>
+                                    <h3 class="text-xl font-extrabold text-slate-900 mt-3">Lemak & DHA</h3>
+                                    <p class="text-[11px] font-extrabold text-emerald-950 mt-1 bg-emerald-100 py-1 px-2 rounded-xl border border-emerald-300">Struktur Sel Otak</p>
+                                </div>
+                                <div class="w-full py-2 bg-sage-700 text-white font-extrabold text-xs rounded-xl shadow-sm flex items-center justify-center gap-1.5">
+                                    <span>🔄 Dipencet Untuk Membalik</span>
+                                </div>
+                            </div>
+
+                            <!-- BACK SIDE -->
+                            <div class="flip-card-back bg-gradient-to-b from-emerald-50 to-teal-100 border-4 border-emerald-400 shadow-md text-left">
+                                <div class="border-b-2 border-emerald-300 pb-1.5 flex items-center justify-between">
+                                    <h4 class="font-extrabold text-sage-800 text-sm">🥑 Lemak & DHA</h4>
+                                    <span class="text-[10px] font-extrabold bg-emerald-200 text-emerald-950 px-2 py-0.5 rounded">Makro</span>
+                                </div>
+                                <ul class="text-[11px] font-bold space-y-1.5 text-slate-900 leading-tight my-auto">
+                                    <li class="bg-white/90 p-2 rounded-xl border border-emerald-300 shadow-sm"><b>🎯 Fungsi:</b> Perkembangan sel otak, kecerdasan & daya ingat balita.</li>
+                                    <li class="bg-white/90 p-2 rounded-xl border border-emerald-300 shadow-sm"><b>🧠 Organ:</b> Otak & Sistem Saraf.</li>
+                                    <li class="bg-white/90 p-2 rounded-xl border border-emerald-300 shadow-sm"><b>🐟 Sumber:</b> Ikan kembung/salmon, alpukat, minyak.</li>
+                                </ul>
+                                <div class="w-full py-1.5 bg-slate-900 text-white text-center font-extrabold text-[11px] rounded-xl shadow-sm">
+                                    ↩️ Dipencet Membalik Lagi
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CARD 4: VITAMIN -->
+                    <div id="flip-card-4" class="flip-card cursor-pointer" onclick="flipCard(4)">
+                        <div class="flip-card-inner">
+                            <!-- FRONT SIDE -->
+                            <div class="flip-card-front bg-white border-4 border-amber-400 shadow-md">
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2.5 py-1 bg-sunnyellow text-slate-950 rounded-full text-[10px] font-extrabold shadow-sm">Mikronutrien</span>
+                                    <span class="text-xl">🛡️</span>
+                                </div>
+                                <div class="my-auto py-2">
+                                    <div class="w-20 h-20 mx-auto rounded-2xl bg-amber-100 flex items-center justify-center text-5xl border-3 border-amber-300 shadow-inner animate-gentle">
+                                        🥕
+                                    </div>
+                                    <h3 class="text-xl font-extrabold text-slate-900 mt-3">Vitamin</h3>
+                                    <p class="text-[11px] font-extrabold text-amber-950 mt-1 bg-amber-100 py-1 px-2 rounded-xl border border-amber-300">Imunitas & Daya Tahan</p>
+                                </div>
+                                <div class="w-full py-2 bg-sunnyellow text-slate-950 font-extrabold text-xs rounded-xl shadow-sm flex items-center justify-center gap-1.5">
+                                    <span>🔄 Dipencet Untuk Membalik</span>
+                                </div>
+                            </div>
+
+                            <!-- BACK SIDE -->
+                            <div class="flip-card-back bg-gradient-to-b from-yellow-50 to-amber-100 border-4 border-amber-400 shadow-md text-left">
+                                <div class="border-b-2 border-amber-300 pb-1.5 flex items-center justify-between">
+                                    <h4 class="font-extrabold text-amber-950 text-sm">🛡️ Vitamin</h4>
+                                    <span class="text-[10px] font-extrabold bg-amber-200 text-amber-950 px-2 py-0.5 rounded">Mikro</span>
+                                </div>
+                                <ul class="text-[11px] font-bold space-y-1.5 text-slate-900 leading-tight my-auto">
+                                    <li class="bg-white/90 p-2 rounded-xl border border-amber-300 shadow-sm"><b>🎯 Fungsi:</b> Melindungi dari infeksi penyakit & menjaga kesehatan mata.</li>
+                                    <li class="bg-white/90 p-2 rounded-xl border border-amber-300 shadow-sm"><b>👁️ Organ:</b> Mata, Kulit & Kekebalan Tubuh.</li>
+                                    <li class="bg-white/90 p-2 rounded-xl border border-amber-300 shadow-sm"><b>🥕 Sumber:</b> Wortel, pepaya, jeruk, brokoli, buah.</li>
+                                </ul>
+                                <div class="w-full py-1.5 bg-slate-900 text-white text-center font-extrabold text-[11px] rounded-xl shadow-sm">
+                                    ↩️ Dipencet Membalik Lagi
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CARD 5: MINERAL -->
+                    <div id="flip-card-5" class="flip-card cursor-pointer" onclick="flipCard(5)">
+                        <div class="flip-card-inner">
+                            <!-- FRONT SIDE -->
+                            <div class="flip-card-front bg-white border-4 border-sky-400 shadow-md">
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2.5 py-1 bg-sky-600 text-white rounded-full text-[10px] font-extrabold shadow-sm">Mikronutrien</span>
+                                    <span class="text-xl">🦴</span>
+                                </div>
+                                <div class="my-auto py-2">
+                                    <div class="w-20 h-20 mx-auto rounded-2xl bg-sky-100 flex items-center justify-center text-5xl border-3 border-sky-300 shadow-inner animate-gentle">
+                                        🥛
+                                    </div>
+                                    <h3 class="text-xl font-extrabold text-slate-900 mt-3">Mineral</h3>
+                                    <p class="text-[11px] font-extrabold text-sky-950 mt-1 bg-sky-100 py-1 px-2 rounded-xl border border-sky-300">Tulang Kuat & Darah Sehat</p>
+                                </div>
+                                <div class="w-full py-2 bg-sky-600 text-white font-extrabold text-xs rounded-xl shadow-sm flex items-center justify-center gap-1.5">
+                                    <span>🔄 Dipencet Untuk Membalik</span>
+                                </div>
+                            </div>
+
+                            <!-- BACK SIDE -->
+                            <div class="flip-card-back bg-gradient-to-b from-sky-50 to-blue-100 border-4 border-sky-400 shadow-md text-left">
+                                <div class="border-b-2 border-sky-300 pb-1.5 flex items-center justify-between">
+                                    <h4 class="font-extrabold text-sky-950 text-sm">🦴 Mineral</h4>
+                                    <span class="text-[10px] font-extrabold bg-sky-200 text-sky-950 px-2 py-0.5 rounded">Mikro</span>
+                                </div>
+                                <ul class="text-[11px] font-bold space-y-1.5 text-slate-900 leading-tight my-auto">
+                                    <li class="bg-white/90 p-2 rounded-xl border border-sky-300 shadow-sm"><b>🎯 Fungsi:</b> Kalsium menguatkan tulang/gigi; Zat Besi mencegah anemia.</li>
+                                    <li class="bg-white/90 p-2 rounded-xl border border-sky-300 shadow-sm"><b>🦴 Organ:</b> Rangka Tulang, Gigi & Darah.</li>
+                                    <li class="bg-white/90 p-2 rounded-xl border border-sky-300 shadow-sm"><b>🥛 Sumber:</b> Susu, bayam, hati ayam, kangkung, kacang.</li>
+                                </ul>
+                                <div class="w-full py-1.5 bg-slate-900 text-white text-center font-extrabold text-[11px] rounded-xl shadow-sm">
+                                    ↩️ Dipencet Membalik Lagi
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: SIMULASI ALIRAN PROSES NUTRISI TUBUH -->
+        <section id="simulasi" class="py-10 bg-gradient-to-br from-slate-900 via-sage-900 to-slate-950 text-white relative overflow-hidden border-t-2 border-sage-200">
+            <div class="max-w-6xl mx-auto px-4 relative z-10">
+                <div class="mb-8">
+                    <span class="text-xs font-extrabold uppercase tracking-wider text-slate-900 bg-sunnyellow px-3.5 py-1 rounded-full shadow-sm">Fase 4 • Proses Dalam Tubuh</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-2">Simulasi Perjalanan Gizi</h2>
+                    <p class="text-sage-200 text-xs sm:text-sm font-bold mt-1">Pilih jenis makanan di bawah untuk melihat simulasi aliran zat gizi ke organ target!</p>
+                </div>
+
+                <!-- Simulation Interactive Play Area -->
+                <div class="bg-white/10 backdrop-blur-md rounded-3xl p-6 border-2 border-sage-500 shadow-md grid md:grid-cols-12 gap-8 items-center">
+                    
+                    <!-- Selection Controls -->
+                    <div class="md:col-span-5 space-y-3">
+                        <h4 class="text-xs font-extrabold text-sunnyellow uppercase tracking-wider">Pilih Jenis Makanan:</h4>
+                        
+                        <button onclick="runSimulation('nasi')" id="sim-btn-nasi" class="sim-btn w-full p-3.5 rounded-2xl bg-white/10 hover:bg-white/20 border-2 border-white/20 text-left flex items-center justify-between transition shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-sunnyellow text-slate-950 flex items-center justify-center font-extrabold text-xl">🍚</div>
+                                <div>
+                                    <h5 class="text-xs font-extrabold text-white">Nasi & Karbohidrat</h5>
+                                    <p class="text-[11px] font-bold text-sage-200">Diurai Menjadi Energi Utama</p>
+                                </div>
+                            </div>
+                            <span class="text-base">▶️</span>
+                        </button>
+
+                        <button onclick="runSimulation('ayam')" id="sim-btn-ayam" class="sim-btn w-full p-3.5 rounded-2xl bg-white/10 hover:bg-white/20 border-2 border-white/20 text-left flex items-center justify-between transition shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-softcoral text-white flex items-center justify-center font-extrabold text-xl">🍗</div>
+                                <div>
+                                    <h5 class="text-xs font-extrabold text-white">Ayam & Protein</h5>
+                                    <p class="text-[11px] font-bold text-sage-200">Membentuk Jaringan Otot</p>
+                                </div>
+                            </div>
+                            <span class="text-base">▶️</span>
+                        </button>
+
+                        <button onclick="runSimulation('susu')" id="sim-btn-susu" class="sim-btn w-full p-3.5 rounded-2xl bg-white/10 hover:bg-white/20 border-2 border-white/20 text-left flex items-center justify-between transition shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-warmorange text-white flex items-center justify-center font-extrabold text-xl">🥛</div>
+                                <div>
+                                    <h5 class="text-xs font-extrabold text-white">Susu & Kalsium</h5>
+                                    <p class="text-[11px] font-bold text-sage-200">Menguatkan Struktur Tulang</p>
+                                </div>
+                            </div>
+                            <span class="text-base">▶️</span>
+                        </button>
+
+                        <button onclick="runSimulation('bayam')" id="sim-btn-bayam" class="sim-btn w-full p-3.5 rounded-2xl bg-white/10 hover:bg-white/20 border-2 border-white/20 text-left flex items-center justify-between transition shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-sage-500 text-white flex items-center justify-center font-extrabold text-xl">🥦</div>
+                                <div>
+                                    <h5 class="text-xs font-extrabold text-white">Sayur & Vitamin</h5>
+                                    <p class="text-[11px] font-bold text-sage-200">Menyokong Kekebalan Imun</p>
+                                </div>
+                            </div>
+                            <span class="text-base">▶️</span>
+                        </button>
+                    </div>
+
+                    <!-- Visual Simulation Graphic -->
+                    <div class="md:col-span-7 bg-slate-950 rounded-2xl p-6 border-2 border-sage-600 relative min-h-[280px] flex flex-col justify-between overflow-hidden shadow-inner">
+                        
+                        <div class="flex items-center justify-between text-xs border-b border-slate-800 pb-3">
+                            <span class="text-sage-200 font-extrabold">Status Proses Aliran:</span>
+                            <span id="sim-status-badge" class="px-3 py-1 rounded-full bg-sunnyellow text-slate-950 font-extrabold text-[11px] shadow-sm">Siap Simulasikan</span>
+                        </div>
+
+                        <!-- Central Flow Graphic -->
+                        <div class="my-6 relative flex items-center justify-around">
+                            <!-- Stomach Node -->
+                            <div class="text-center">
+                                <div class="w-16 h-16 rounded-2xl bg-slate-800 border-2 border-sage-400 flex items-center justify-center text-3xl mx-auto shadow-md">
+                                    🍽️
+                                </div>
+                                <span class="text-[11px] text-sage-200 font-extrabold mt-1 block">Pencernaan</span>
+                            </div>
+
+                            <!-- Particles Stream Line -->
+                            <div class="flex-1 px-4 text-center relative">
+                                <div class="h-3 bg-slate-800 rounded-full border border-slate-700"></div>
+                                <div id="sim-particles-container" class="absolute inset-0 flex items-center justify-center"></div>
+                            </div>
+
+                            <!-- Target Organ -->
+                            <div class="text-center">
+                                <div id="sim-target-icon" class="w-16 h-16 rounded-2xl bg-slate-800 border-2 border-sunnyellow flex items-center justify-center text-3xl mx-auto shadow-md">
+                                    ⭐
+                                </div>
+                                <span id="sim-target-name" class="text-[11px] text-sunnyellow font-extrabold mt-1 block">Tumbuh Fisik</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 text-xs text-sage-100 font-bold">
+                            <p id="sim-explanation-text">
+                                Sentuh tombol makanan di sebelah kiri untuk melihat animasi bagaimana zat gizi dicerna dan dialirkan ke organ tubuh balita!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: KUIS LATIHAN & GAME -->
+        <section id="game-zone" class="py-10 bg-white border-t-2 border-sage-200">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="mb-8">
+                    <span class="text-xs font-extrabold uppercase tracking-wider text-white bg-sage-700 px-3.5 py-1 rounded-full shadow-sm">Fase 5 • Kuis & Game</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">Kuis Latihan & Game Edukasi</h2>
+                    <p class="text-slate-800 text-xs sm:text-sm font-bold mt-1">Uji pemahaman nutrisi balita dengan 5 soal latihan kuis dan permainan mencocokkan.</p>
+                </div>
+
+                <!-- Sub Navigation Tabs -->
+                <div class="flex gap-2 mb-6">
+                    <button onclick="switchGameTab('quiz')" id="tab-quiz-btn" class="px-4 py-2.5 rounded-xl font-extrabold text-xs bg-sage-700 text-white shadow-sm transition flex items-center gap-2">
+                        📝 5 Soal Latihan Kuis
+                    </button>
+                    <button onclick="switchGameTab('match')" id="tab-match-btn" class="px-4 py-2.5 rounded-xl font-extrabold text-xs bg-sage-100 text-slate-900 border-2 border-sage-300 hover:bg-sage-200 transition flex items-center gap-2">
+                        🧩 Game Cocokkan Makanan
+                    </button>
+                </div>
+
+                <!-- TAB 1: 5 SOAL LATIHAN KUIS -->
+                <div id="game-quiz-wrapper" class="max-w-2xl mx-auto bg-gradient-to-b from-emerald-50 to-amber-50 p-6 sm:p-8 rounded-3xl border-3 border-sage-300 shadow-md">
+                    <div id="quiz-container">
+                        <div class="flex items-center justify-between text-xs font-extrabold text-slate-900 mb-4 bg-white p-3.5 rounded-xl border-2 border-sage-200 shadow-sm">
+                            <span id="quiz-progress-text">Pertanyaan 1 dari 5</span>
+                            <span id="quiz-score-text" class="bg-sage-700 px-3.5 py-1 rounded-full text-white">Skor: 0</span>
+                        </div>
+
+                        <h3 id="quiz-question-text" class="text-base sm:text-lg font-extrabold text-slate-950 mb-5 leading-snug">
+                            <!-- Question text -->
+                        </h3>
+
+                        <div id="quiz-options-container" class="space-y-3">
+                            <!-- Dynamic Options -->
+                        </div>
+
+                        <div id="quiz-feedback" class="mt-4 p-4 rounded-xl text-xs font-bold hidden shadow-sm">
+                            <!-- Feedback -->
+                        </div>
+
+                        <div class="mt-6 flex justify-end">
+                            <button id="quiz-next-btn" onclick="nextQuestion()" class="hidden px-5 py-2.5 bg-sage-700 hover:bg-sage-800 text-white font-extrabold rounded-xl text-xs transition shadow-md">
+                                Soal Selanjutnya ➔
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: GAME MENCOCOKKAN -->
+                <div id="game-match-wrapper" class="hidden max-w-4xl mx-auto bg-gradient-to-b from-emerald-50 to-amber-50 p-6 sm:p-8 rounded-3xl border-3 border-sage-300 shadow-md">
+                    <div class="text-center mb-6">
+                        <h3 class="text-xl font-extrabold text-slate-900">Game Cocokkan Makanan & Kandungan Gizi</h3>
+                        <p class="text-xs font-bold text-slate-800 mt-1">Sentuh bahan makanan di sebelah kiri, lalu sentuh kotak target nutrisi di sebelah kanan!</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6 items-start">
+                        <!-- Left: Draggable Food Items -->
+                        <div class="bg-white p-5 rounded-2xl border-2 border-sage-300 space-y-3 shadow-sm">
+                            <h4 class="text-xs font-extrabold text-sage-800 uppercase tracking-wider border-b-2 border-sage-100 pb-2">Bahan Makanan Sehat:</h4>
+                            <div id="food-draggable-list" class="space-y-2.5">
+                                <div onclick="selectItemMobile('telur')" id="food-item-telur" class="draggable-item bg-amber-50 border-2 border-amber-300 p-3.5 rounded-xl flex items-center justify-between font-extrabold text-xs text-slate-900 hover:bg-amber-100 transition cursor-pointer shadow-sm">
+                                    <span class="flex items-center gap-2 text-sm"><span class="text-lg">🍳</span> Telur Ayam</span>
+                                    <span class="text-amber-900 text-[11px] bg-amber-200 px-2 py-0.5 rounded">👆 Ketuk</span>
+                                </div>
+
+                                <div onclick="selectItemMobile('bayam')" id="food-item-bayam" class="draggable-item bg-emerald-50 border-2 border-emerald-300 p-3.5 rounded-xl flex items-center justify-between font-extrabold text-xs text-slate-900 hover:bg-emerald-100 transition cursor-pointer shadow-sm">
+                                    <span class="flex items-center gap-2 text-sm"><span class="text-lg">🥦</span> Sayur Bayam</span>
+                                    <span class="text-emerald-900 text-[11px] bg-emerald-200 px-2 py-0.5 rounded">👆 Ketuk</span>
+                                </div>
+
+                                <div onclick="selectItemMobile('nasi')" id="food-item-nasi" class="draggable-item bg-orange-50 border-2 border-orange-300 p-3.5 rounded-xl flex items-center justify-between font-extrabold text-xs text-slate-900 hover:bg-orange-100 transition cursor-pointer shadow-sm">
+                                    <span class="flex items-center gap-2 text-sm"><span class="text-lg">🍚</span> Nasi Putih</span>
+                                    <span class="text-orange-950 text-[11px] bg-orange-200 px-2 py-0.5 rounded">👆 Ketuk</span>
+                                </div>
+
+                                <div onclick="selectItemMobile('susu')" id="food-item-susu" class="draggable-item bg-yellow-50 border-2 border-yellow-300 p-3.5 rounded-xl flex items-center justify-between font-extrabold text-xs text-slate-900 hover:bg-yellow-100 transition cursor-pointer shadow-sm">
+                                    <span class="flex items-center gap-2 text-sm"><span class="text-lg">🥛</span> Susu Sehat</span>
+                                    <span class="text-amber-950 text-[11px] bg-yellow-200 px-2 py-0.5 rounded">👆 Ketuk</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Target Drop Zones -->
+                        <div class="bg-white p-5 rounded-2xl border-2 border-sage-300 space-y-3 shadow-sm">
+                            <h4 class="text-xs font-extrabold text-sage-800 uppercase tracking-wider border-b-2 border-sage-100 pb-2">Target Kandungan Nutrisi:</h4>
+                            
+                            <div onclick="dropMobile('nasi')" id="zone-nasi" class="drop-zone border-2 border-dashed border-sage-400 p-3.5 rounded-xl text-center bg-sage-50 transition min-h-[52px] flex items-center justify-center cursor-pointer hover:bg-sage-100">
+                                <span class="text-xs font-extrabold text-slate-900">⚡ Karbohidrat Utama (Sumber Energi)</span>
+                            </div>
+
+                            <div onclick="dropMobile('telur')" id="zone-telur" class="drop-zone border-2 border-dashed border-sage-400 p-3.5 rounded-xl text-center bg-sage-50 transition min-h-[52px] flex items-center justify-center cursor-pointer hover:bg-sage-100">
+                                <span class="text-xs font-extrabold text-slate-900">🧠 Protein Tinggi & Kolin Otak</span>
+                            </div>
+
+                            <div onclick="dropMobile('bayam')" id="zone-bayam" class="drop-zone border-2 border-dashed border-sage-400 p-3.5 rounded-xl text-center bg-sage-50 transition min-h-[52px] flex items-center justify-center cursor-pointer hover:bg-sage-100">
+                                <span class="text-xs font-bold text-slate-900">🛡️ Zat Besi, Vit A & Serat</span>
+                            </div>
+
+                            <div onclick="dropMobile('susu')" id="zone-susu" class="drop-zone border-2 border-dashed border-sage-400 p-3.5 rounded-xl text-center bg-sage-50 transition min-h-[52px] flex items-center justify-center cursor-pointer hover:bg-sage-100">
+                                <span class="text-xs font-extrabold text-slate-900">🦴 Kalsium & Vit D Tulang Kuat</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Matching Game Result -->
+                    <div id="match-game-result" class="mt-6 text-center hidden p-5 bg-emerald-100 rounded-2xl border-3 border-sage-500 shadow-md">
+                        <h4 class="text-lg font-extrabold text-slate-900">🎉 Hebat! Semua Pasangan Benar!</h4>
+                        <p class="text-xs font-bold text-slate-800 mt-1">Anda sudah paham kaitan bahan makanan dengan kandungan gizinya!</p>
+                        <button onclick="resetMatchGame()" class="mt-4 px-5 py-2.5 bg-sage-700 text-white text-xs font-extrabold rounded-xl shadow-md hover:bg-sage-800 transition">Main Lagi</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-white border-t-2 border-slate-800 py-6">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+            <div>
+                <h3 class="font-heading text-xl font-bold text-sunnyellow">Petualangan Gizi Balita</h3>
+                <p class="text-xs text-sage-200 font-bold mt-0.5">Edukasi Digital Tumbuh Kembang & Nutrisi Seimbang Anak Indonesia.</p>
+            </div>
+            <p class="text-xs text-sage-300 font-bold">&copy; 2026 Petualangan Gizi Balita.</p>
+        </div>
+    </footer>
+
+    <!-- SCRIPT APP LOGIC & DATA -->
+    <script>
+        const ageStagesData = [
+            {
+                badge: "0 - 6 Bulan",
+                title: "Usia 0 - 6 Bulan: Tahap ASI Eksklusif",
+                desc: "Pencernaan bayi sangat peka. Seluruh gizi makro & mikro terpenuhi sempurna hanya dari ASI ibu.",
+                heightWeight: "BB 3.2 - 7.9 kg | PB 49 - 67 cm",
+                nutritionFocus: "ASI Eksklusif 100%",
+                grossMotor: "Mengangkat kepala saat tengkurap, miring kanan/kiri.",
+                fineMotor: "Menggenggam jari orang tua, meraih benda terdekat.",
+                socialLanguage: "Tersenyum responsif, mengoceh suara vokal sederhana.",
+                foodRec: "ASI Eksklusif sesering mungkin. Belum perlu air putih atau makanan padat.",
+                emoji: "🍼"
+            },
+            {
+                badge: "6 - 12 Bulan",
+                title: "Usia 6 - 12 Bulan: Tahap Pengenalan MPASI",
+                desc: "Mulai belajar makan makanan pendamping ASI (MPASI) bertekstur lumatan lembut sambil melanjutkan ASI.",
+                heightWeight: "BB 7.2 - 9.6 kg | PB 65 - 74 cm",
+                nutritionFocus: "ASI + MPASI Kaya Protein Hewani",
+                grossMotor: "Duduk mandiri tanpa sandaran, merangkak, belajar berdiri.",
+                fineMotor: "Memindahkan mainan antar tangan, menjimpit makanan kecil.",
+                socialLanguage: "Memanggil 'mama/papa', merespons saat namanya dipanggil.",
+                foodRec: "Bubur saring atau makanan lumat ditambah protein hewani (telur/ikan/ayam cincang).",
+                emoji: "🥣"
+            },
+            {
+                badge: "1 - 2 Tahun",
+                title: "Usia 1 - 2 Tahun: Tahap Makanan Keluarga",
+                desc: "Anak mulai aktif berjalan, berlari kecil, dan ikut menyantap menu makanan keluarga sehari-hari.",
+                heightWeight: "BB 9.0 - 12.2 kg | PB 74 - 87 cm",
+                nutritionFocus: "Menu Keluarga Gizi Seimbang",
+                grossMotor: "Berjalan lancar, mulai bisa menaiki tangga dengan bantuan.",
+                fineMotor: "Mencoret-coret kertas, makan menggunakan sendok sendiri.",
+                socialLanguage: "Menguasai 10-20 kosakata, menunjuk bagian tubuh saat ditanya.",
+                foodRec: "Makanan keluarga cincang halus, nasi tim, sayur bening, buah potong, dan susu.",
+                emoji: "🧸"
+            },
+            {
+                badge: "2 - 3 Tahun",
+                title: "Usia 2 - 3 Tahun: Tahap Eksplorasi Aktif",
+                desc: "Pertumbuhan fisik pesat, anak sangat aktif melompat, berbicara, serta rasa ingin tahu yang tinggi.",
+                heightWeight: "BB 11.5 - 14.5 kg | PB 85 - 96 cm",
+                nutritionFocus: "Karbohidrat Kompleks & Protein Berkualitas",
+                grossMotor: "Melompat di tempat, berlari kencang, melempar bola.",
+                fineMotor: "Menyusun menara balok tinggi, menggambar garis lurus.",
+                socialLanguage: "Bisa merangkai kalimat pendek 3 kata, bermain interaktif.",
+                foodRec: "Nasi, lauk pauk (ikan/telur/tahu), sayuran hijau, buah segar, dan air putih.",
+                emoji: "🎨"
+            },
+            {
+                badge: "3 - 5 Tahun",
+                title: "Usia 3 - 5 Tahun: Tahap Pra-Sekolah",
+                desc: "Persiapan fisik & otak optimal untuk masuk sekolah PAUD/TK dengan kemampuan motorik halus yang matang.",
+                heightWeight: "BB 13.5 - 18.5 kg | PB 94 - 110 cm",
+                nutritionFocus: "Zat Besi, Kalsium & Vitamin Lengkap",
+                grossMotor: "Bersepeda roda tiga, berdiri satu kaki dalam beberapa detik.",
+                fineMotor: "Memegang pensil dengan benar, menggunting kertas pola.",
+                socialLanguage: "Bercerita panjang, bernyanyi, berhitung sederhana.",
+                foodRec: "Porsi seimbang 3 kali makan utama ditambah 2 kali selingan sehat bergizi.",
+                emoji: "🎒"
+            }
+        ];
+
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+        let selectedMobileMatchItem = null;
+
+        const quizQuestions = [
+            {
+                question: "1. Apa makanan utama yang wajib diberikan penuh pada bayi usia 0 sampai 6 bulan?",
+                options: ["Nasi tim halus", "ASI Eksklusif", "Bubur saring instan", "Susu formula dicampur madu"],
+                correct: 1,
+                explanation: "Bayi 0-6 bulan hanya membutuhkan ASI eksklusif karena sistem pencernaannya belum siap menerima makanan lain."
+            },
+            {
+                question: "2. Zat gizi apa yang berfungsi paling utama sebagai sumber energi harian balita beraktivitas?",
+                options: ["Karbohidrat", "Vitamin C", "Kalsium murni", "Serat kasar"],
+                correct: 0,
+                explanation: "Karbohidrat (seperti nasi, ubi, kentang) adalah pemasok energi utama bagi otak dan otot balita."
+            },
+            {
+                question: "3. Mengapa protein hewani (seperti telur dan ikan) sangat penting bagi balita?",
+                options: ["Agar anak cepat mengantuk", "Membantu pembentukan sel tubuh dan mencegah stunting", "Hanya sebagai pewarna makanan", "Membuat gigi cepat tanggal"],
+                correct: 1,
+                explanation: "Protein hewani kaya asam amino esensial yang sangat penting untuk pertumbuhan otot, tinggi badan, dan mencegah stunting."
+            },
+            {
+                question: "4. Mineral Kalsium dan Vitamin D dalam susu berfungsi paling utama untuk organ tubuh bagian...",
+                options: ["Kuku jari kaki", "Rangka tulang dan gigi", "Bulu mata", "Pori-pori kulit"],
+                correct: 1,
+                explanation: "Kalsium dan Vitamin D bekerja sama membangun struktur tulang dan gigi balita agar tumbuh kuat dan kokoh."
+            },
+            {
+                question: "5. Apa fungsi utama Vitamin dan Mineral (mikronutrien) bagi tubuh balita?",
+                options: ["Menjaga kekebalan tubuh (imun) dari penyakit", "Membuat balita cepat lelah", "Menambah berat badan instan", "Sebagai pengganti air putih"],
+                correct: 0,
+                explanation: "Mikronutrien seperti vitamin dan mineral melindungi tubuh anak dari infeksi serta menjaga fungsi organ bekerja optimal."
+            }
+        ];
+
+        function flipCard(cardId) {
+            const card = document.getElementById(`flip-card-${cardId}`);
+            if (card) {
+                card.classList.toggle('flipped');
+            }
+        }
+
+        function setAgeStage(index) {
+            const data = ageStagesData[index];
+            if (!data) return;
+
+            document.querySelectorAll('.age-tab').forEach((btn, i) => {
+                if (i === index) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+
+            document.getElementById('stage-badge-title').innerText = data.badge;
+            document.getElementById('stage-title').innerText = data.title;
+            document.getElementById('stage-desc').innerText = data.desc;
+            document.getElementById('stage-height-weight').innerText = data.heightWeight;
+            document.getElementById('stage-nutrition-focus').innerText = data.nutritionFocus;
+            document.getElementById('stage-motor-gross').innerText = data.grossMotor;
+            document.getElementById('stage-motor-fine').innerText = data.fineMotor;
+            document.getElementById('stage-social').innerText = data.socialLanguage;
+            document.getElementById('stage-food-rec').innerText = data.foodRec;
+
+            const avatar = document.getElementById('character-avatar');
+            avatar.innerText = data.emoji;
+            document.getElementById('hero-character-emoji').innerText = data.emoji;
+        }
+
+        function runSimulation(type) {
+            const container = document.getElementById('sim-particles-container');
+            const targetIcon = document.getElementById('sim-target-icon');
+            const targetName = document.getElementById('sim-target-name');
+            const expText = document.getElementById('sim-explanation-text');
+            const statusBadge = document.getElementById('sim-status-badge');
+
+            document.querySelectorAll('.sim-btn').forEach(btn => btn.classList.remove('bg-white/30', 'border-sunnyellow'));
+            document.getElementById(`sim-btn-${type}`).classList.add('bg-white/30', 'border-sunnyellow');
+
+            container.innerHTML = '';
+
+            let colorClass = 'bg-sunnyellow';
+            let emojiMarkup = '⚡';
+            let targetEmoji = '🏃';
+            let targetLabel = 'Energi Bermain & Bergerak';
+            let text = '';
+
+            if (type === 'nasi') {
+                colorClass = 'bg-sunnyellow';
+                emojiMarkup = '🍚';
+                targetEmoji = '🏃';
+                targetLabel = 'Glukosa Energi';
+                text = 'Karbohidrat nasi dicerna menjadi glukosa yang mengalir sebagai bahan bakar otak & otot anak!';
+            } else if (type === 'ayam') {
+                colorClass = 'bg-softcoral';
+                emojiMarkup = '🍗';
+                targetEmoji = '💪';
+                targetLabel = 'Jaringan Otot Kuat';
+                text = 'Protein diurai menjadi Asam Amino untuk membentuk sel-sel otot baru & mendukung tinggi badan!';
+            } else if (type === 'susu') {
+                colorClass = 'bg-warmorange';
+                emojiMarkup = '🥛';
+                targetEmoji = '🦴';
+                targetLabel = 'Rangka Tulang & Gigi';
+                text = 'Kalsium & Vitamin D diserap tubuh untuk memperkuat struktur tulang dan gigi balita!';
+            } else if (type === 'bayam') {
+                colorClass = 'bg-sage-500';
+                emojiMarkup = '🥦';
+                targetEmoji = '🛡️';
+                targetLabel = 'Sistem Kekebalan Imun';
+                text = 'Vitamin & Mineral dari sayur menyokong antibodi agar anak tidak mudah terserang sakit!';
+            }
+
+            statusBadge.innerText = `Menyimulasikan (${type.toUpperCase()})...`;
+
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const p = document.createElement('div');
+                    p.className = `particle w-6 h-6 rounded-full ${colorClass} flex items-center justify-center text-[10px] shadow-md`;
+                    p.innerText = emojiMarkup;
+                    container.appendChild(p);
+                    setTimeout(() => p.remove(), 1800);
+                }, i * 300);
+            }
+
+            setTimeout(() => {
+                targetIcon.innerText = targetEmoji;
+                targetName.innerText = targetLabel;
+                expText.innerText = text;
+                statusBadge.innerText = 'Nutrisi Terdistribusi Sempurna!';
+            }, 750);
+        }
+
+        function switchGameTab(tab) {
+            const quizBtn = document.getElementById('tab-quiz-btn');
+            const matchBtn = document.getElementById('tab-match-btn');
+            const quizWrapper = document.getElementById('game-quiz-wrapper');
+            const matchWrapper = document.getElementById('game-match-wrapper');
+
+            if (tab === 'quiz') {
+                quizBtn.className = "px-4 py-2.5 rounded-xl font-extrabold text-xs bg-sage-700 text-white shadow-sm transition flex items-center gap-2";
+                matchBtn.className = "px-4 py-2.5 rounded-xl font-extrabold text-xs bg-sage-100 text-slate-900 border-2 border-sage-300 hover:bg-sage-200 transition flex items-center gap-2";
+                quizWrapper.classList.remove('hidden');
+                matchWrapper.classList.add('hidden');
+            } else {
+                matchBtn.className = "px-4 py-2.5 rounded-xl font-extrabold text-xs bg-sage-700 text-white shadow-sm transition flex items-center gap-2";
+                quizBtn.className = "px-4 py-2.5 rounded-xl font-extrabold text-xs bg-sage-100 text-slate-900 border-2 border-sage-300 hover:bg-sage-200 transition flex items-center gap-2";
+                matchWrapper.classList.remove('hidden');
+                quizWrapper.classList.add('hidden');
+            }
+        }
+
+        function loadQuizQuestion() {
+            const q = quizQuestions[currentQuizIndex];
+            document.getElementById('quiz-progress-text').innerText = `Pertanyaan ${currentQuizIndex + 1} dari ${quizQuestions.length}`;
+            document.getElementById('quiz-score-text').innerText = `Skor: ${quizScore}`;
+            document.getElementById('quiz-question-text').innerText = q.question;
+
+            const optionsContainer = document.getElementById('quiz-options-container');
+            optionsContainer.innerHTML = '';
+
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.classList.add('hidden');
+            document.getElementById('quiz-next-btn').classList.add('hidden');
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3 rounded-xl border border-sage-200 hover:border-sage-500 hover:bg-sage-50 font-bold text-xs text-slate-800 transition flex items-center justify-between shadow-sm bg-white";
+                btn.innerHTML = `<span>${opt}</span> <span class="text-slate-400">⭕</span>`;
+                btn.onclick = () => checkQuizAnswer(idx, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkQuizAnswer(selectedIdx, btnElement) {
+            const q = quizQuestions[currentQuizIndex];
+            const feedback = document.getElementById('quiz-feedback');
+            const optionsContainer = document.getElementById('quiz-options-container');
+
+            Array.from(optionsContainer.children).forEach(child => child.disabled = true);
+
+            if (selectedIdx === q.correct) {
+                btnElement.className = "w-full text-left p-3 rounded-xl border border-sage-500 bg-sage-100 font-bold text-xs text-slate-900 flex items-center justify-between shadow-sm";
+                btnElement.querySelectorAll('span')[1].innerText = "✅";
+                feedback.className = "mt-4 p-3 rounded-xl text-xs font-bold bg-sage-100 text-sage-800 border border-sage-300";
+                feedback.innerHTML = `🎉 <b>Jawaban Benar!</b> ${q.explanation}`;
+                quizScore += 20;
+                document.getElementById('quiz-score-text').innerText = `Skor: ${quizScore}`;
+                if (typeof confetti === 'function') confetti({ particleCount: 40, spread: 50, origin: { y: 0.8 } });
+            } else {
+                btnElement.className = "w-full text-left p-3 rounded-xl border border-gray-300 bg-gray-50 font-bold text-xs text-slate-600 flex items-center justify-between";
+                btnElement.querySelectorAll('span')[1].innerText = "❌";
+                
+                const correctBtn = optionsContainer.children[q.correct];
+                correctBtn.className = "w-full text-left p-3 rounded-xl border border-sage-500 bg-sage-100 font-bold text-xs text-slate-900 flex items-center justify-between";
+
+                feedback.className = "mt-4 p-3 rounded-xl text-xs font-bold bg-amber-50 text-amber-900 border border-amber-200";
+                feedback.innerHTML = `💡 <b>Belum Tepat.</b> ${q.explanation}`;
+            }
+
+            feedback.classList.remove('hidden');
+            document.getElementById('quiz-next-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuizIndex++;
+            if (currentQuizIndex < quizQuestions.length) {
+                loadQuizQuestion();
+            } else {
+                document.getElementById('quiz-container').innerHTML = `
+                    <div class="text-center py-6 space-y-3">
+                        <div class="w-16 h-16 bg-sage-100 text-sage-800 rounded-full flex items-center justify-center text-3xl mx-auto border border-sage-300 animate-gentle">
+                            🏆
+                        </div>
+                        <h3 class="text-xl font-extrabold text-sage-800">Selamat! Kuis Latihan Selesai!</h3>
+                        <p class="text-xs font-bold text-slate-700">Skor Akhir Anda: <span class="font-extrabold text-sage-700 text-xl">${quizScore}</span> / ${quizQuestions.length * 20}</p>
+                        <p class="text-[11px] font-medium text-slate-600">Anda sudah memahami nutrisi penting untuk tumbuh kembang anak!</p>
+                        <button onclick="resetQuiz()" class="px-5 py-2.5 bg-sage-500 text-white font-bold text-xs rounded-xl shadow-sm hover:opacity-90 transition">
+                            Ulangi Kuis Latihan
+                        </button>
+                    </div>
+                `;
+                if (typeof confetti === 'function') confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
+            }
+        }
+
+        function resetQuiz() {
+            currentQuizIndex = 0;
+            quizScore = 0;
+            document.getElementById('quiz-container').innerHTML = `
+                <div class="flex items-center justify-between text-xs font-bold text-slate-700 mb-4 bg-white p-3 rounded-xl border border-sage-200">
+                    <span id="quiz-progress-text">Pertanyaan 1 dari 5</span>
+                    <span id="quiz-score-text" class="bg-sage-500 px-3 py-1 rounded-full text-white">Skor: 0</span>
+                </div>
+                <h3 id="quiz-question-text" class="text-base sm:text-lg font-extrabold text-slate-900 mb-5 leading-snug"></h3>
+                <div id="quiz-options-container" class="space-y-2.5"></div>
+                <div id="quiz-feedback" class="mt-4 p-3 rounded-xl text-xs font-bold hidden"></div>
+                <div class="mt-6 flex justify-end">
+                    <button id="quiz-next-btn" onclick="nextQuestion()" class="hidden px-5 py-2.5 bg-sage-500 hover:opacity-90 text-white font-bold rounded-xl text-xs transition shadow-sm">
+                        Soal Selanjutnya ➔
+                    </button>
+                </div>
+            `;
+            loadQuizQuestion();
+        }
+
+        function selectItemMobile(key) {
+            selectedMobileMatchItem = key;
+            document.querySelectorAll('.draggable-item').forEach(el => el.classList.remove('ring-2', 'ring-sage-500'));
+            const selEl = document.getElementById(`food-item-${key}`);
+            if (selEl) selEl.classList.add('ring-2', 'ring-sage-500');
+        }
+
+        function dropMobile(targetKey) {
+            if (!selectedMobileMatchItem) return;
+            if (selectedMobileMatchItem === targetKey) {
+                const draggedElement = document.getElementById(`food-item-${selectedMobileMatchItem}`);
+                const dropZone = document.getElementById(`zone-${targetKey}`);
+                dropZone.innerHTML = draggedElement.innerHTML;
+                dropZone.className = "drop-zone border border-sage-500 p-3 rounded-xl text-center bg-sage-100 font-bold text-xs text-slate-900 shadow-sm flex items-center justify-center";
+                draggedElement.style.display = "none";
+                selectedMobileMatchItem = null;
+                checkMatchGameCompletion();
+            } else {
+                const dropZone = document.getElementById(`zone-${targetKey}`);
+                dropZone.classList.add('border-softcoral', 'bg-rose-50');
+                setTimeout(() => dropZone.classList.remove('border-softcoral', 'bg-rose-50'), 600);
+            }
+        }
+
+        function checkMatchGameCompletion() {
+            const hiddenItems = document.querySelectorAll('.draggable-item[style*="display: none"]');
+            if (hiddenItems.length === 4) {
+                document.getElementById('match-game-result').classList.remove('hidden');
+                if (typeof confetti === 'function') confetti({ particleCount: 70, spread: 60, origin: { y: 0.7 } });
+            }
+        }
+
+        function resetMatchGame() {
+            document.querySelectorAll('.draggable-item').forEach(el => {
+                el.style.display = "flex";
+                el.classList.remove('ring-2', 'ring-sage-500');
+            });
+
+            document.getElementById('zone-nasi').className = "drop-zone border-2 border-dashed border-sage-300 p-3 rounded-xl text-center bg-sage-50/50 transition min-h-[48px] flex items-center justify-center cursor-pointer hover:bg-sage-100";
+            document.getElementById('zone-nasi').innerHTML = `<span class="text-xs font-bold text-slate-700">⚡ Karbohidrat Utama (Sumber Energi)</span>`;
+
+            document.getElementById('zone-telur').className = "drop-zone border-2 border-dashed border-sage-300 p-3 rounded-xl text-center bg-sage-50/50 transition min-h-[48px] flex items-center justify-center cursor-pointer hover:bg-sage-100";
+            document.getElementById('zone-telur').innerHTML = `<span class="text-xs font-bold text-slate-700">🧠 Protein Tinggi & Kolin Otak</span>`;
+
+            document.getElementById('zone-bayam').className = "drop-zone border-2 border-dashed border-sage-300 p-3 rounded-xl text-center bg-sage-50/50 transition min-h-[48px] flex items-center justify-center cursor-pointer hover:bg-sage-100";
+            document.getElementById('zone-bayam').innerHTML = `<span class="text-xs font-bold text-slate-700">🛡️ Zat Besi, Vit A & Serat</span>`;
+
+            document.getElementById('zone-susu').className = "drop-zone border-2 border-dashed border-sage-300 p-3 rounded-xl text-center bg-sage-50/50 transition min-h-[48px] flex items-center justify-center cursor-pointer hover:bg-sage-100";
+            document.getElementById('zone-susu').innerHTML = `<span class="text-xs font-bold text-slate-700">🦴 Kalsium & Vit D Tulang Kuat</span>`;
+
+            document.getElementById('match-game-result').classList.add('hidden');
+            selectedMobileMatchItem = null;
+        }
+
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        window.onload = function() {
+            setAgeStage(0);
+            loadQuizQuestion();
+        }
+    </script>
+</body>
+</html>
